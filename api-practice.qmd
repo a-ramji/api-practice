@@ -5,13 +5,17 @@ format: html
 editor: visual
 ---
 
-## Getting 
+## Getting
 
 list of my repos from github
 
 ```{r}
 library(httr)
 library(purrr)
+library(dataRetrieval)
+library(tidyverse)
+library(janitor)
+library(metajam)
 ```
 
 ```{r}
@@ -23,3 +27,91 @@ my_repos <- map_chr(my_repos_list, "full_name")
 
 my_repos
 ```
+
+## Exercise 1
+
+-   Using `dataRetrieval` get the the discharge (ft³/s) time-series for the Ventura River (site `11118500`) during the recent Hilary tropical storm from 2023-08-19 to 2023-08-22
+
+-   Plot the time-series usgin `ggplot2`
+
+-   What was the maximum discharge during this period of time?
+
+```{r}
+siteNumber <- "11118500"
+parameterCd <- "00060" # Discharge
+startDate <- "2023-08-19"
+endDate <- "2023-08-22"
+
+discharge <- readNWISdv(siteNumber, parameterCd, startDate, endDate) |> 
+  clean_names() |> 
+  mutate(discharge_ft3_s = x_00060_00003)
+
+
+```
+
+Plotting
+
+```{r}
+ggplot(data = discharge, aes(x = date, y = discharge_ft3_s)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Date", y = "Discharge (ft^3/s", title = "Discharge of Ventura River during tropical storm Hilary") +
+  theme_minimal()
+```
+
+The maximum discharge during this time period was
+
+```{r}
+max(discharge$discharge_ft3_s)
+```
+
+### **Bonus**
+
+-   How would you try to determine when this stream gauge record started (read the documentation :) ) ?
+
+    -   November 1908
+
+    -   documentation says start date -- tab for summary of all available data
+
+-   How does the max value compare to the discharge during the storm on 2023-01-09 ?
+
+    -   
+
+## **`metajam`**
+
+The `metajam` R package relies on the dataONE API to download data **and** metadata into your R Environment. It is currently supporting KNB, ADC and EDI repositories because they rely on the metadata standard EML.
+
+Short [intro](https://brunj7.github.io/eds214-slides/metajam_intro.html) to the package
+
+### **Exercise 2**
+
+Let\'s determine what percentage of Alaskan household are speaking only English!
+
+The data: https://doi.org/10.5063/F1N58JPP
+
+1.  Read the metadata on the website
+
+2.  Start a new R script and write a code to:
+
+    -   download the data `household_language.csv` using `metajam`
+
+    -   Read the data into R using `metajam`
+
+    -   compute the percentage of Alaskan household speaking only English from 2009 to 2015
+
+3.  Create a plot to visualize this data
+
+```{r}
+data_obj <- "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3A7fc6f6db-c5ea-426a-a743-1f2edafb43b8"
+path <- "/Users/aramji/github/api-practice"
+
+download_d1_data(data_obj, path)
+```
+
+```{r}
+
+```
+
+### **Bonus**
+
+-   How does it compare to French?
