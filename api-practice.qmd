@@ -16,6 +16,7 @@ library(dataRetrieval)
 library(tidyverse)
 library(janitor)
 library(metajam)
+library(here)
 ```
 
 ```{r}
@@ -85,7 +86,7 @@ Short [intro](https://brunj7.github.io/eds214-slides/metajam_intro.html) to the 
 
 ### **Exercise 2**
 
-Let\'s determine what percentage of Alaskan household are speaking only English!
+Let's determine what percentage of Alaskan household are speaking only English!
 
 The data: https://doi.org/10.5063/F1N58JPP
 
@@ -101,12 +102,22 @@ The data: https://doi.org/10.5063/F1N58JPP
 
 3.  Create a plot to visualize this data
 
+### Downloading the data:
+
 ```{r}
 data_obj <- "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3A7fc6f6db-c5ea-426a-a743-1f2edafb43b8"
 path <- "/Users/aramji/github/api-practice"
+# you could also put "." to indicate your current location (here!)
 
 download_d1_data(data_obj, path)
 ```
+
+```{r}
+# my_data <- read_d1_files("~/Desktop/doi_10.18739_A2DP3X__Alaska_Schools_Rentention2009_15")
+
+```
+
+### Reading in the data:
 
 ```{r}
 
