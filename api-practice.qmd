@@ -120,7 +120,45 @@ download_d1_data(data_obj, path)
 ### Reading in the data:
 
 ```{r}
+ak_household_data <- read_d1_files("doi_10.5063_F1N58JPP__household_language__csv")
+```
 
+Extract data frame out of that list
+
+```{r}
+household_language_data <- ak_household_data$data
+```
+
+compute the percentage of Alaskan household speaking only English from 2009 to 2015
+
+```{r}
+with_percent_eng <- household_language_data |> 
+  mutate(only_english_percent = (speak_only_english/total)) |> 
+  filter(Year %in% c(2009:2015)) |> 
+  group_by(Year) |> 
+  summarize(only_eng_perc2 = mean(only_english_percent, na.rm = TRUE))
+```
+
+```{r}
+percent_english <- household_language_data |> 
+  select(Year, total, speak_only_english, city) |> 
+  filter(Year %in% c(2009:2015)) |> 
+  group_by(Year) |> 
+  summarise(percent_only_english = (sum(speak_only_english, na.rm = TRUE) / sum(total, na.rm = TRUE)))
+
+```
+
+```{r}
+# ggplot(with_percent_eng, aes(x = Year, y = only_english_percent)) +
+#   geom_point()
+```
+
+```{r}
+ggplot(percent_english, aes(x = Year, y = percent_only_english)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Year", y = "% of houesholds where only English is spoken") +
+  theme_minimal()
 ```
 
 ### **Bonus**
